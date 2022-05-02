@@ -9,17 +9,12 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { "content-type": "text/html" });
       res.write(fs.readFileSync(path.join("./public/pages/index.html"), {encoding: 'utf-8'}));
       res.end();
-    } else if (req.url == "/public/images/image.png" && req.method == "GET") {
-      res.writeHead(200, { "content-type": "image/png" });
-      res.write(fs.readFileSync(path.join("./public/images/image.png")));
-      res.end();
-    } else if (req.url == "/public/css/style.css" && req.method == "GET") {
-      res.writeHead(200, { "content-type": "text/css" });
-      res.write(fs.readFileSync(path.join("./public/css/style.css")));
-      res.end();
-    } else if (req.url == "/public/js/script.js" && req.method == "GET") {
-      res.writeHead(200, { "content-type": "text/javascript" });
-      res.write(fs.readFileSync(path.join("./public/js/script.js")));
+    } else if (req.url.startsWith("/public/") && req.method == "GET") {
+        console.log(req.url)
+        const fileType = req.url.split("/")[2]
+        const fileName = req.url.split("/")[3]
+      res.writeHead(200);
+      res.write(fs.readFileSync(path.join(`./public/${fileType}/${fileName}`)));
       res.end();
     } else if (req.url == "/" && req.method != "GET") {
       res.writeHead(405, { "content-type": "text/html" });
