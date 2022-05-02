@@ -40,7 +40,10 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, { "content-type": "application/json" })
             const id = req.url.split("/")[3]
             res.write(JSON.stringify(Array.from(memoryDb.entries())[id] || []))
-        } 
+        } else {
+            res.writeHead(404, { "content-type": "application/json" })
+            res.write(JSON.stringify({"error": "not found"}))
+        }
         console.log(data)
 	    res.end(); // ici termine votre route
 	  });
