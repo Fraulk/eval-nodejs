@@ -2,6 +2,12 @@ const http = require("http");
 const fs = require("fs")
 const path = require("path")
 
+const memoryDb = new Map(); // est global
+let id = 0; // doit être global
+memoryDb.set(id++, {nom: "Alice"}) // voici comment set une nouvelle entrée.
+memoryDb.set(id++, {nom: "Bob"})
+memoryDb.set(id++, {nom: "Charlie"})
+
 const server = http.createServer((req, res) => {
   try {
     console.log(req.httpVersion, req.url, req.method);
@@ -20,7 +26,29 @@ const server = http.createServer((req, res) => {
       res.writeHead(405, { "content-type": "text/html" });
       res.write(fs.readFileSync(path.join("./public/pages/method-not-allowed.html"), {encoding: 'utf-8'}));
       res.end();
-    } else {
+    } else if (req.url.startsWith("/api")) {
+		let data = '';
+	  req.on('data', chunk => {
+	    data += chunk;
+	  });
+	  req.on('end', () => {
+	    data = data && JSON.parse(data) || null  
+		if (req.url == "/api/names" && req.method == "GET") {   // GET ALL
+            res.writeHead(200, { "content-type": "application/json" })
+            res.write(JSON.stringify(Array.from(memoryDb.entries())))
+        } else if (req.url.startsWith("/api/name") && req.method == "GET") {    // GET ONE
+            res.writeHead(200, { "content-type": "application/json" })
+            const id = req.url.split("/")[3]
+            res.write(JSON.stringify(Array.from(memoryDb.entries())[id] || []))
+        } else {
+            res.writeHead(404, { "content-type": "application/json" })
+            res.write(JSON.stringify({"error": "not found"}))
+        }
+        console.log(data)
+	    res.end(); // ici termine votre route
+	  });
+	}
+    else {
       res.writeHead(404, { "content-type": "text/html" });
       res.write(fs.readFileSync(path.join("./public/pages/not-found.html"), {encoding: 'utf-8'}));
       res.end();
