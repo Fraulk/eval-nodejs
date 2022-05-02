@@ -13,6 +13,10 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { "content-type": "image/png" });
       res.write(fs.readFileSync(path.join("./public/images/image.png")));
       res.end();
+    } else if (req.url == "/public/css/style.css" && req.method == "GET") {
+      res.writeHead(200, { "content-type": "text/css" });
+      res.write(fs.readFileSync(path.join("./public/css/style.css")));
+      res.end();
     } else if (req.url == "/" && req.method != "GET") {
       res.writeHead(405, { "content-type": "text/html" });
       res.write(fs.readFileSync(path.join("./public/pages/method-not-allowed.html"), {encoding: 'utf-8'}));
