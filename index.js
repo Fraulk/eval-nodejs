@@ -26,7 +26,18 @@ const server = http.createServer((req, res) => {
       res.writeHead(405, { "content-type": "text/html" });
       res.write(fs.readFileSync(path.join("./public/pages/method-not-allowed.html"), {encoding: 'utf-8'}));
       res.end();
-    } else {
+    } else if (req.url.startsWith("/api")) {
+		let data = '';
+	  req.on('data', chunk => {
+	    data += chunk;
+	  });
+	  req.on('end', () => {
+	    data = data && JSON.parse(data) || null  
+        console.log(data)
+	    res.end(); // ici termine votre route
+	  });
+	}
+    else {
       res.writeHead(404, { "content-type": "text/html" });
       res.write(fs.readFileSync(path.join("./public/pages/not-found.html"), {encoding: 'utf-8'}));
       res.end();
