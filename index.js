@@ -36,7 +36,11 @@ const server = http.createServer((req, res) => {
 		if (req.url == "/api/names" && req.method == "GET") {   // GET ALL
             res.writeHead(200, { "content-type": "application/json" })
             res.write(JSON.stringify(Array.from(memoryDb.entries())))
-        }
+        } else if (req.url.startsWith("/api/name") && req.method == "GET") {    // GET ONE
+            res.writeHead(200, { "content-type": "application/json" })
+            const id = req.url.split("/")[3]
+            res.write(JSON.stringify(Array.from(memoryDb.entries())[id] || []))
+        } 
         console.log(data)
 	    res.end(); // ici termine votre route
 	  });
