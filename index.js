@@ -8,8 +8,12 @@ const server = http.createServer((req, res) => {
       res.write("<h1>HELLO WORLD FRAT ULKER</h1>");
       res.end();
     } else if (req.url == "/" && req.method != "GET") {
-      res.writeHead(404, { "content-type": "text/html" });
+      res.writeHead(405, { "content-type": "text/html" });
       res.write(`<h1>405: Méthode non autorisée</h1>`);
+      res.end();
+    } else {
+      res.writeHead(404, { "content-type": "text/html" });
+      res.write(`<h1>404: Page introuvable</h1>`);
       res.end();
     }
   } catch (err) {
