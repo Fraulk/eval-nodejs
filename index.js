@@ -33,6 +33,10 @@ const server = http.createServer((req, res) => {
 	  });
 	  req.on('end', () => {
 	    data = data && JSON.parse(data) || null  
+		if (req.url == "/api/names" && req.method == "GET") {   // GET ALL
+            res.writeHead(200, { "content-type": "application/json" })
+            res.write(JSON.stringify(Array.from(memoryDb.entries())))
+        }
         console.log(data)
 	    res.end(); // ici termine votre route
 	  });
