@@ -3,13 +3,13 @@ const http = require("http");
 const server = http.createServer((req, res) => {
   try {
     console.log(req.httpVersion, req.url, req.method);
-    if (req.url === "/") {
+    if (req.url === "/" && req.method == "GET") {
       res.writeHead(200, { "content-type": "text/html" });
       res.write("<h1>HELLO WORLD FRAT ULKER</h1>");
       res.end();
-    } else {
+    } else if (req.url == "/" && req.method != "GET") {
       res.writeHead(404, { "content-type": "text/html" });
-      res.write("<h1>404 Not Found</h1>");
+      res.write(`<h1>405: Méthode non autorisée</h1>`);
       res.end();
     }
   } catch (err) {
