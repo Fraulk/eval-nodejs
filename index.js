@@ -32,7 +32,7 @@ const server = http.createServer((req, res) => {
 	    data += chunk;
 	  });
 	  req.on('end', () => {
-	    data = data && JSON.parse(data) || null  
+	    data = data && JSON.parse(data) || null
 		if (req.url == "/api/names" && req.method == "GET") {   // GET ALL
             res.writeHead(200, { "content-type": "application/json" })
             res.write(JSON.stringify(Array.from(memoryDb.entries())))
@@ -40,9 +40,31 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, { "content-type": "application/json" })
             const id = req.url.split("/")[3]
             res.write(JSON.stringify(Array.from(memoryDb.entries())[id] || []))
+        } else if (req.url.startsWith("/api/names") && req.method == "POST") {    // POST
+            const body = data || null
+            if (body) {
+              memoryDb.set(id++, data)
+              res.writeHead(200, { "content-type": "application/json" })
+              res.write(JSON.stringify(body))
+            } else {
+              res.writeHead(400, { "content-type": "application/json" })
+              res.write(JSON.stringify({"error": "malformed"}))
+            }
+        } else if (req.url.startsWith("/api/name") && req.method == "DELETE") {    // DELETE
+          res.writeHead(204, { "content-type": "application/json" })
+          const id = Number(req.url.split("/")[3])
+          console.log(memoryDb.delete(id))
+          console.log(memoryDb)
+          res.write()
+        } else if (req.url.startsWith("/api/name") && req.method == "PUT") {    // PUT
+          res.writeHead(200, { "content-type": "application/json" })
+          const id = Number(req.url.split("/")[3])
+          console.log(memoryDb.set(id, data))
+          console.log(memoryDb)
+          res.write(JSON.stringify(data))
         } else {
-            res.writeHead(404, { "content-type": "application/json" })
-            res.write(JSON.stringify({"error": "not found"}))
+          res.writeHead(404, { "content-type": "application/json" })
+          res.write(JSON.stringify({"error": "not found"}))
         }
         console.log(data)
 	    res.end(); // ici termine votre route
